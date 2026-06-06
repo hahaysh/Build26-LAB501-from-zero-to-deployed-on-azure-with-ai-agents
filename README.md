@@ -52,12 +52,18 @@
 
 아래 예시는 출발점입니다. 필요하면 그대로 복사하거나 목적에 맞게 수정해 사용하세요.
 
-- "Scaffold a Python Flask app on Azure Container Apps **and** a Python Azure Function App with Bicep and `azd`, using managed identity for ACR pulls and Cosmos DB access."
-- "Review my Container App Bicep for production-readiness gaps — managed identity, RBAC, VNet integration, diagnostic settings, and health probes — and propose fixes."
-- "Find the minimum-privilege Cosmos DB RBAC role for an app that only reads data, and generate the `az cosmosdb sql role assignment create` command."
-- "Visualize the resources in my resource group as a Mermaid architecture diagram, including cross-resource-group dependencies like Cosmos DB."
-- "My Container App is returning 503. Pull system logs, correlate with ingress configuration, and tell me the root cause and fix."
-- "Write a KQL query against `ContainerAppSystemLogs_CL` that calculates downtime between the first `ProbeFailed` event and the next `RevisionReady` event, then turn it into an `az monitor scheduled-query create` alert rule."
+- KR: "ACR pull과 Cosmos DB 접근에 managed identity를 적용해, Bicep과 `azd`로 Azure Container Apps의 Python Flask 앱 **그리고** Python Azure Function App을 함께 스캐폴딩해줘."
+    EN: "Scaffold a Python Flask app on Azure Container Apps **and** a Python Azure Function App with Bicep and `azd`, using managed identity for ACR pulls and Cosmos DB access."
+- KR: "내 Container App Bicep을 프로덕션 관점에서 검토해줘. managed identity, RBAC, VNet 통합, 진단 설정, 헬스 프로브의 갭을 찾고 수정안을 제안해줘."
+    EN: "Review my Container App Bicep for production-readiness gaps — managed identity, RBAC, VNet integration, diagnostic settings, and health probes — and propose fixes."
+- KR: "데이터 읽기 전용 앱에 필요한 최소 권한 Cosmos DB RBAC 역할을 찾아주고, `az cosmosdb sql role assignment create` 명령을 생성해줘."
+    EN: "Find the minimum-privilege Cosmos DB RBAC role for an app that only reads data, and generate the `az cosmosdb sql role assignment create` command."
+- KR: "내 리소스 그룹의 리소스를 Mermaid 아키텍처 다이어그램으로 시각화해줘. Cosmos DB 같은 교차 리소스 그룹 의존성도 포함해줘."
+    EN: "Visualize the resources in my resource group as a Mermaid architecture diagram, including cross-resource-group dependencies like Cosmos DB."
+- KR: "내 Container App이 503을 반환하고 있어. 시스템 로그를 수집하고 ingress 설정과 상관 분석해서 원인과 해결책을 알려줘."
+    EN: "My Container App is returning 503. Pull system logs, correlate with ingress configuration, and tell me the root cause and fix."
+- KR: "`ContainerAppSystemLogs_CL`에서 첫 `ProbeFailed` 이벤트와 다음 `RevisionReady` 이벤트 사이 다운타임을 계산하는 KQL을 작성하고, 이를 `az monitor scheduled-query create` 경고 규칙으로 만들어줘."
+    EN: "Write a KQL query against `ContainerAppSystemLogs_CL` that calculates downtime between the first `ProbeFailed` event and the next `RevisionReady` event, then turn it into an `az monitor scheduled-query create` alert rule."
 
 ### 💻 사용 기술
 
