@@ -126,3 +126,19 @@ graph TB
 | 7 | [Scenario 4 — Investigate & Operationalize](07-scenario-4-investigate-and-operationalize.md) | `07-scenario-4-investigate-and-operationalize.md` | ~15 min |
 | 8 | [Troubleshooting](08-troubleshooting.md) | `08-troubleshooting.md` | Reference |
 | 9 | [What's Next](09-whats-next.md) | `09-whats-next.md` | Reference |
+
+## Korean Guide
+
+For Build Localhost Seoul attendees, full Korean versions are available:
+
+- [Korean Guide Index](ko/README.md)
+- [Overview (Korean)](ko/00-overview.ko.md)
+- [Prerequisites (Korean)](ko/01-prerequisites.ko.md)
+- [Before You Begin - Login & Launch (Korean)](ko/02-login-and-launch.ko.md)
+- [Set Up the Starter App (Korean)](ko/03-getting-started.ko.md)
+- [Scenario 1 - Ship It & Harden It (Korean)](ko/04-scenario-1-ship-and-harden.ko.md)
+- [Scenario 2 - See It & Evaluate It (Korean)](ko/05-scenario-2-see-and-evaluate.ko.md)
+- [Scenario 3 - Break It & Triage It (Korean)](ko/06-scenario-3-break-and-triage.ko.md)
+- [Scenario 4 - Investigate & Operationalize (Korean)](ko/07-scenario-4-investigate-and-operationalize.ko.md)
+- [Troubleshooting (Korean)](ko/08-troubleshooting.ko.md)
+- [What's Next (Korean)](ko/09-whats-next.ko.md)

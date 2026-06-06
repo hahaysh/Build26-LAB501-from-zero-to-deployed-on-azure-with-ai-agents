@@ -2,7 +2,7 @@ import os
 import math
 import urllib.parse
 import urllib.request
-from flask import Flask, render_template, request, abort, Response
+from flask import Flask, render_template, request, abort, Response, url_for
 from azure.cosmos import CosmosClient
 from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
 from dotenv import load_dotenv
@@ -24,6 +24,183 @@ if not COSMOS_ENDPOINT:
     )
 
 ITEMS_PER_PAGE = 24
+SUPPORTED_LANGS = {"en", "ko"}
+DEFAULT_UI_LANG = os.environ.get("UI_LANG", "ko").lower()
+
+TRANSLATIONS = {
+    "en": {
+        "page_home": "Home",
+        "page_browse": "Browse Sets",
+        "page_not_found": "404 - Not Found",
+        "nav_home": "Home",
+        "nav_browse": "Browse",
+        "nav_search_placeholder": "Search the galaxy...",
+        "hero_intro": "A LONG TIME AGO IN A BRICK BOX FAR, FAR AWAY...",
+        "hero_description": "Explore the ultimate collection of {total_sets} LEGO sets across {total_themes} themes. Search, discover, and relive the builds.",
+        "hero_search_placeholder": "Search for any LEGO set...",
+        "hero_search_button": "SEARCH",
+        "stat_total_sets": "Total Sets",
+        "stat_themes": "Themes",
+        "stat_years": "Years of LEGO",
+        "featured_heading": "LEGENDARY BUILDS",
+        "featured_browse_all": "BROWSE ALL SETS",
+        "browse_heading": "BROWSE SETS",
+        "browse_showing_results": "Showing results for",
+        "browse_in_theme": "in",
+        "browse_sets_found": "{count} sets found",
+        "browse_search_label": "Search",
+        "browse_search_placeholder": "Set name...",
+        "browse_theme_label": "Theme",
+        "browse_all_themes": "All Themes",
+        "browse_year_label": "Year",
+        "browse_year_placeholder": "e.g. 2023",
+        "browse_sort_label": "Sort",
+        "browse_sort_name": "Name A-Z",
+        "browse_sort_year_desc": "Newest First",
+        "browse_sort_year_asc": "Oldest First",
+        "browse_sort_parts_desc": "Most Parts",
+        "browse_sort_parts_asc": "Fewest Parts",
+        "browse_go": "GO",
+        "browse_active_filters": "Active filters:",
+        "browse_clear_all": "Clear all",
+        "browse_owned": "OWNED",
+        "browse_pieces": "pieces",
+        "browse_prev": "Prev",
+        "browse_next": "Next",
+        "browse_no_sets": "NO SETS FOUND",
+        "browse_no_sets_copy": "These are not the bricks you're looking for...",
+        "browse_clear_filters": "Clear Filters",
+        "detail_in_collection": "IN YOUR COLLECTION",
+        "detail_set_prefix": "SET",
+        "detail_pieces": "Pieces",
+        "detail_released": "Released",
+        "detail_set_number": "Set Number",
+        "detail_theme": "Theme",
+        "detail_year_released": "Year Released",
+        "detail_number_of_parts": "Number of Parts",
+        "detail_type": "Type",
+        "detail_more_theme": "More {theme}",
+        "detail_all_from_year": "All from {year}",
+        "detail_more_from_theme": "MORE FROM {theme}",
+        "not_found_heading": "DISTURBANCE IN THE FORCE",
+        "not_found_copy": "The set you're looking for has been lost in hyperspace.",
+        "not_found_subcopy": "It may have been moved, removed, or perhaps it existed only in a galaxy far, far away.",
+        "not_found_home": "RETURN HOME",
+        "not_found_search": "SEARCH SETS",
+        "footer_tagline": "A long time ago in a brick box far, far away...",
+        "footer_powered": "Powered by Azure Cosmos DB",
+        "footer_sets_indexed": "{count} sets indexed",
+        "lang_en": "EN",
+        "lang_ko": "KR",
+    },
+    "ko": {
+        "page_home": "홈",
+        "page_browse": "세트 찾아보기",
+        "page_not_found": "404 - 페이지를 찾을 수 없음",
+        "nav_home": "홈",
+        "nav_browse": "찾아보기",
+        "nav_search_placeholder": "레고 세트를 검색하세요...",
+        "hero_intro": "아주 오래전, 머나먼 브릭 박스에서...",
+        "hero_description": "총 {total_sets}개의 LEGO 세트와 {total_themes}개의 테마를 탐색해 보세요. 검색하고, 발견하고, 다시 빌드의 즐거움을 떠올려 보세요.",
+        "hero_search_placeholder": "원하는 LEGO 세트를 검색하세요...",
+        "hero_search_button": "검색",
+        "stat_total_sets": "전체 세트",
+        "stat_themes": "테마 수",
+        "stat_years": "레고 역사",
+        "featured_heading": "대표 빌드",
+        "featured_browse_all": "전체 세트 보기",
+        "browse_heading": "세트 찾아보기",
+        "browse_showing_results": "검색어",
+        "browse_in_theme": "테마",
+        "browse_sets_found": "{count}개 검색됨",
+        "browse_search_label": "검색",
+        "browse_search_placeholder": "세트 이름...",
+        "browse_theme_label": "테마",
+        "browse_all_themes": "모든 테마",
+        "browse_year_label": "연도",
+        "browse_year_placeholder": "예: 2023",
+        "browse_sort_label": "정렬",
+        "browse_sort_name": "이름순",
+        "browse_sort_year_desc": "최신순",
+        "browse_sort_year_asc": "오래된순",
+        "browse_sort_parts_desc": "부품 많은순",
+        "browse_sort_parts_asc": "부품 적은순",
+        "browse_go": "이동",
+        "browse_active_filters": "활성 필터:",
+        "browse_clear_all": "모두 지우기",
+        "browse_owned": "보유",
+        "browse_pieces": "피스",
+        "browse_prev": "이전",
+        "browse_next": "다음",
+        "browse_no_sets": "검색 결과 없음",
+        "browse_no_sets_copy": "조건에 맞는 브릭을 찾지 못했습니다...",
+        "browse_clear_filters": "필터 초기화",
+        "detail_in_collection": "보유 중",
+        "detail_set_prefix": "세트",
+        "detail_pieces": "피스 수",
+        "detail_released": "출시연도",
+        "detail_set_number": "세트 번호",
+        "detail_theme": "테마",
+        "detail_year_released": "출시연도",
+        "detail_number_of_parts": "부품 수",
+        "detail_type": "유형",
+        "detail_more_theme": "{theme} 더 보기",
+        "detail_all_from_year": "{year}년 전체 보기",
+        "detail_more_from_theme": "{theme}의 다른 세트",
+        "not_found_heading": "포스를 흔드는 오류",
+        "not_found_copy": "찾으시는 세트가 하이퍼스페이스에서 사라졌습니다.",
+        "not_found_subcopy": "이동되었거나 삭제되었을 수 있고, 아주 먼 은하계에만 존재했을지도 모릅니다.",
+        "not_found_home": "홈으로 이동",
+        "not_found_search": "세트 검색",
+        "footer_tagline": "아주 오래전, 머나먼 브릭 박스에서...",
+        "footer_powered": "Azure Cosmos DB 기반",
+        "footer_sets_indexed": "총 {count}개 세트 인덱싱",
+        "lang_en": "EN",
+        "lang_ko": "KR",
+    },
+}
+
+
+def get_ui_lang():
+    requested_lang = request.args.get("lang", "").lower()
+    if requested_lang in SUPPORTED_LANGS:
+        return requested_lang
+    if DEFAULT_UI_LANG in SUPPORTED_LANGS:
+        return DEFAULT_UI_LANG
+    return "en"
+
+
+@app.context_processor
+def inject_ui_helpers():
+    current_lang = get_ui_lang()
+
+    def t(key, **kwargs):
+        template = TRANSLATIONS.get(current_lang, {}).get(key)
+        if template is None:
+            template = TRANSLATIONS["en"].get(key, key)
+        return template.format(**kwargs) if kwargs else template
+
+    def localized_url(endpoint, **values):
+        if current_lang != "en" and "lang" not in values:
+            values["lang"] = current_lang
+        return url_for(endpoint, **values)
+
+    def switch_lang_url(target_lang):
+        endpoint = request.endpoint or "home"
+        values = dict(request.view_args or {})
+        values.update(request.args.to_dict(flat=True))
+        if target_lang == "en":
+            values.pop("lang", None)
+        else:
+            values["lang"] = target_lang
+        return url_for(endpoint, **values)
+
+    return {
+        "current_lang": current_lang,
+        "t": t,
+        "localized_url": localized_url,
+        "switch_lang_url": switch_lang_url,
+    }
 
 
 def get_container():

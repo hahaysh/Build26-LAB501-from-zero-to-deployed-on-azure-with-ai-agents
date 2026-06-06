@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" data-ui-lang="{{ current_lang }}" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +42,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Logo -->
-                <a href="{{ url_for('home') }}" class="flex items-center gap-3 group">
+                <a href="{{ localized_url('home') }}" class="flex items-center gap-3 group">
                     <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-sw-yellow to-sw-gold flex items-center justify-center shadow-lg shadow-sw-yellow/20 group-hover:shadow-sw-yellow/40 transition-shadow">
                         <svg class="w-6 h-6 text-sw-dark" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
@@ -55,22 +55,31 @@
 
                 <!-- Nav Links -->
                 <div class="flex items-center gap-6">
-                    <a href="{{ url_for('home') }}"
+                    <a href="{{ localized_url('home') }}"
                        class="font-display text-sm tracking-wide text-gray-300 hover:text-sw-yellow transition-colors uppercase">
-                        Home
+                        {{ t('nav_home') }}
                     </a>
-                    <a href="{{ url_for('browse') }}"
+                    <a href="{{ localized_url('browse') }}"
                        class="font-display text-sm tracking-wide text-gray-300 hover:text-sw-yellow transition-colors uppercase">
-                        Browse
+                        {{ t('nav_browse') }}
                     </a>
 
+                    <div class="hidden sm:flex items-center gap-2 text-xs font-display tracking-wider text-gray-500">
+                                <a href="{{ switch_lang_url('en') }}"
+                           class="hover:text-sw-yellow transition-colors {% if current_lang == 'en' %}text-sw-yellow{% endif %}">{{ t('lang_en') }}</a>
+                        <span>/</span>
+                                <a href="{{ switch_lang_url('ko') }}"
+                           class="hover:text-sw-yellow transition-colors {% if current_lang == 'ko' %}text-sw-yellow{% endif %}">{{ t('lang_ko') }}</a>
+                    </div>
+
                     <!-- Quick Search -->
-                    <form action="{{ url_for('browse') }}" method="GET" class="hidden sm:flex items-center">
+                    <form action="{{ localized_url('browse') }}" method="GET" class="hidden sm:flex items-center">
                         <div class="relative">
-                            <input type="text" name="q" placeholder="Search the galaxy..."
+                            {% if current_lang != 'en' %}<input type="hidden" name="lang" value="{{ current_lang }}">{% endif %}
+                            <input type="text" name="q" placeholder="{{ t('nav_search_placeholder') }}"
                                    value="{{ request.args.get('q', '') }}"
                                    class="w-48 lg:w-64 pl-4 pr-10 py-2 rounded-full bg-sw-gray border border-sw-yellow/30 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-sw-yellow focus:ring-1 focus:ring-sw-yellow/50 transition-all">
-                            <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-sw-yellow/60 hover:text-sw-yellow transition-colors">
+                            <button type="submit" title="{{ t('hero_search_button') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-sw-yellow/60 hover:text-sw-yellow transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                                 </svg>
@@ -94,10 +103,10 @@
                 <div class="flex items-center gap-2">
                     <span class="font-display text-sw-yellow/60 text-sm tracking-wider">LEGO VAULT</span>
                     <span class="text-gray-600">|</span>
-                    <span class="text-gray-500 text-sm">A long time ago in a brick box far, far away...</span>
+                    <span class="text-gray-500 text-sm">{{ t('footer_tagline') }}</span>
                 </div>
                 <div class="text-gray-600 text-xs">
-                    Powered by Azure Cosmos DB &bull; {{ total_sets if total_sets is defined else '21,495' }} sets indexed
+                    {{ t('footer_powered') }} &bull; {{ t('footer_sets_indexed', count=total_sets if total_sets is defined else '21,495') }}
                 </div>
             </div>
         </div>
